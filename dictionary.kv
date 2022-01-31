@@ -1,0 +1,1310 @@
+WindowManager:
+	StartWindow:
+	DictionaryWindow:
+	ViewWindow:
+	CommandWindow:
+	AddWordWindow:
+	DelWordWindow:
+	EditWordWindow:
+	ChangeWindow:
+	MultiMeaningEdit:
+	TestCustomizationWindow:
+	TestWindow:
+	TranslateWindow:
+	SettingsWindow:
+	AddDictionaryWindow:
+	CreateNewDicWindow:
+
+    #:import Factory kivy.factory.Factory
+
+
+<notInDic@Popup>:
+
+    auto_dismiss: True
+    size_hint: dp(.4), dp(.15)
+    pos_hint: {'x': .3, 'top': .9}
+
+    title: 'Word Not in Dictionary'
+
+
+<alreadyInDic@Popup>:
+
+    auto_dismiss: True
+    size_hint: dp(.5), dp(.2)
+    pos_hint: {'x': .3, 'top': .9}
+
+    title: 'Word already in Dictionary'
+
+
+<StartWindow>:
+	name: 'StartWindow'
+
+	canvas.before:
+		Color:
+			rgba: 235/255,196/255,155/255,1
+		Rectangle:
+			size: root.size
+
+
+<DictionaryWindow>:
+	name: 'DictionaryWindow'
+
+	GridLayout:
+
+		canvas.before:
+			Color:
+				rgba: 235/255,196/255,155/255,1
+			Rectangle:
+				size: root.size
+
+		rows: 3
+		cols: 1
+
+		GridLayout:
+
+			size_hint: 1,0.2
+			cols: 2
+			rows: 1
+
+			Label:
+				id: words
+				text:
+				font_name: 'Fonts\\Caveat-Regular.ttf'
+				font_size: 36
+				color: (0,0,0,1)
+				outline_width: 1
+				outline_color: 163/255,49/255,7/255,1
+
+			Label:
+				id: meanings
+				text:
+				font_name: 'Fonts\\Caveat-Regular.ttf'
+				font_size: 36
+				color: (0,0,0,1)
+				outline_width: 1
+				outline_color: 163/255,49/255,7/255,1
+
+		ScrollView:
+			do_scroll_x: False
+    		do_scroll_y: True
+
+			BoxLayout:
+
+				size_hint_y: None
+				height: self.minimum_height
+
+				Label:
+					id: DictionaryWindow_words
+					text: root.showWords()
+					color: (0,0,0,1)
+					size_hint_y: None
+					height: self.texture_size[1]
+					font_size: 24
+					font_name: 'Fonts\\comic.ttf'
+				    halign: 'center'
+				    valign: 'middle'
+
+				Label:
+					id: DictionaryWindow_meanings
+					text: root.showMeanings()
+					color: (0,0,0,1)
+					size_hint_y: None
+					height: self.texture_size[1]
+					font_size: 24
+					font_name: 'Fonts\\comic.ttf'
+				    halign: 'center'
+				    valign: 'middle'
+
+		BoxLayout:
+
+			size_hint: 1, 0.2
+
+			Button:
+				text: 'View'
+				background_normal: ''
+				background_color: (219/255,124/255,8/255,1)
+				font_size: 36
+				font_name: 'Fonts\\BRITANIC.TTF'
+				canvas.after:
+			        Color:
+			            rgba: 160/255,79/255,0,1
+			        Line:
+			            width: 3
+			            rectangle: self.width, 0, 0, self.height-2
+				on_release:
+					root.ViewButton()
+
+			Button:
+				text: 'Commands'
+				background_normal: ''
+				background_color: (219/255,124/255,8/255,1)
+				font_size: 36
+				font_name: 'Fonts\\BRITANIC.TTF'
+				on_release:
+					app.root.current = 'CommandWindow'
+					root.manager.transition.direction = 'left'
+
+		RelativeLayout:
+
+
+#:set searchbar_width (200)
+
+			TextInput:
+				id: searchbar
+				hint_text: 'search here...'
+				multiline: False
+				size_hint: None, None
+				size: searchbar_width, dp(50)
+				pos: root.width//2 - searchbar_width//2, root.height - dp(60)
+				disabled: True if DictionaryWindow_words.text == 'Add Your First Word' else False
+				on_text_validate:
+					Factory.notInDic().open() if root.wordUnknown() and root.meaningUnknown() else root.searchWord()
+
+			Button:	
+				id: sortbutton
+				text: 'Sort Alphabetically'
+				background_normal: ''
+				background_color: (251/255,208/255,100/255,1)
+				color: (0,0,0,1)
+				font_size: 14
+				size_hint: None, None
+				size: (132, 55)
+				pos: (root.width - 135), (root.height - 60)
+				disabled: False if DictionaryWindow_words.text != 'Add Your First Word' else True
+				on_release:
+					DictionaryWindow_words.text = root.showWords() if sortbutton.text == 'Sort UpdateWise' else root.sort_words()
+					DictionaryWindow_meanings.text = root.showMeanings() if sortbutton.text == 'Sort UpdateWise' else root.sort_meanings()
+					sortbutton.text = 'Sort UpdateWise' if sortbutton.text == 'Sort Alphabetically' else 'Sort Alphabetically'
+
+
+<ViewWindow>:
+	name: 'ViewWindow'
+
+	RelativeLayout:
+
+		canvas.before:
+			Color:
+				rgba: 235/255,196/255,155/255,1
+			Rectangle:
+				size: root.size
+
+		rows: 2
+		cols: 1
+
+		GridLayout:
+			cols: 2
+			rows: 1
+
+			pos_hint: {'x':-0.01,'top':1.4}
+
+			Label:
+				id: words
+				text:
+				font_name: 'Fonts\\Caveat-Regular.ttf'
+				font_size: 32
+				color: (0,0,0,1)
+				outline_width: 1
+				outline_color: 163/255,49/255,7/255,1
+
+			Label:
+				id: meanings
+				text:
+				font_name: 'Fonts\\Caveat-Regular.ttf'
+				font_size: 32
+				color: (0,0,0,1)
+				outline_width: 1
+				outline_color: 163/255,49/255,7/255,1
+
+		ScrollView:
+
+			size_hint_y: 0.8
+
+			do_scroll_x: False
+    		do_scroll_y: True
+
+			BoxLayout:
+
+				size_hint_y: None
+				height: self.minimum_height 
+
+				Label:
+					id: ViewWindow_words
+					text: root.manager.get_screen('DictionaryWindow').ids.DictionaryWindow_words.text
+					color: (0,0,0,1)
+					size_hint_y: None
+					height: self.texture_size[1]
+					font_size: 24
+					font_name: 'Fonts\\comic.ttf'
+				    halign: 'center'
+				    valign: 'middle'
+
+				Label:
+					id: ViewWindow_meanings
+					text: root.manager.get_screen('DictionaryWindow').ids.DictionaryWindow_meanings.text
+					color: (0,0,0,1)
+					size_hint_y: None
+					height: self.texture_size[1]
+					font_size: 24
+					font_name: 'Fonts\\comic.ttf'
+				    halign: 'center'
+				    valign: 'middle'
+
+		RelativeLayout:
+
+			Button:	
+				text: 'Back'
+				background_normal: ''
+				ouitline_color: (0,0,0,1)
+				outline_width: 4
+				background_color: (165/255,18/255,249/255,1)
+				background_normal: ''
+				font_size: 32
+				font_name: 'Fonts\\BarlowCondensed-Black.ttf'
+				size_hint: None, None
+				size: dp(120), dp(75)
+				pos: dp(15), (root.height - 90)
+				on_release:
+					root.backButton()
+
+		RelativeLayout:
+
+
+#:set searchbar_width (200)
+
+			TextInput:
+				id: searchbar
+				hint_text: 'search here...'
+				multiline: False
+				size_hint: None, None
+				size: searchbar_width, dp(50)
+				pos: root.width//2 - searchbar_width//2, root.height - dp(60)
+				disabled : True if ViewWindow_words.text == 'Add Your First Word' else False
+				on_text_validate:
+					Factory.notInDic().open() if root.wordUnknown() and root.meaningUnknown() else root.searchWord()
+
+			Button:	
+				id: sortbutton
+				text: 'Sort Alphabetically'
+				background_normal: ''
+				background_color: (251/255,208/255,100/255,1)
+				color: (0,0,0,1)
+				font_size: 14
+				size_hint: None, None
+				size: (132, 55)
+				pos: (root.width - 135), (root.height - 60)
+				disabled: False if ViewWindow_words.text != 'Add Your First Word' else True
+				on_release:
+					ViewWindow_words.text = root.manager.get_screen('DictionaryWindow').showWords() if sortbutton.text == 'Sort UpdateWise' else root.manager.get_screen('DictionaryWindow').sort_words()
+					ViewWindow_meanings.text = root.manager.get_screen('DictionaryWindow').showMeanings() if sortbutton.text == 'Sort UpdateWise' else root.manager.get_screen('DictionaryWindow').sort_meanings()
+					sortbutton.text = 'Sort UpdateWise' if sortbutton.text == 'Sort Alphabetically' else 'Sort Alphabetically'		
+
+
+<CommandWindow>:
+	name: 'CommandWindow'
+
+	BoxLayout:
+
+		canvas.before:
+			Color:
+				rgba: 235/255,196/255,155/255,1
+			Rectangle:
+				size: root.size
+
+		orientation: 'vertical'
+
+		size_hint: None, None
+
+		size: dp(400), dp(400)
+
+		pos: root.center_x - dp(400)/2, root.center_y - dp(400)/2
+
+		Button:
+			text: 'Add Words'
+			background_normal: ''
+			background_color: (219/255,124/255,8/255,1)
+			font_size: 32
+			font_name: 'Fonts\\BRITANIC.TTF'
+			on_release:
+				root.addWordButton()
+
+		Button:
+			text: 'Delete Words'
+			background_normal: ''
+			background_color: (219/255,124/255,8/255,1)
+			font_size: 32
+			font_name: 'Fonts\\BRITANIC.TTF'
+			on_release:
+				app.root.current = 'DelWordWindow'
+				root.manager.transition.direction = 'left'
+
+		Button:
+			text: 'Edit Words'
+			background_normal: ''
+			background_color: (219/255,124/255,8/255,1)
+			font_size: 32
+			font_name: 'Fonts\\BRITANIC.TTF'
+			on_release:
+				app.root.current = 'EditWordWindow'
+				root.manager.transition.direction = 'left'
+
+		Button:
+			text: 'Take a test'
+			background_normal: ''
+			background_color: (219/255,124/255,8/255,1)
+			font_size: 32
+			font_name: 'Fonts\\BRITANIC.TTF'
+			on_release:
+				root.testCustomizationButton()
+
+		Button:
+			text: 'Translator'
+			background_normal: ''
+			background_color: (219/255,124/255,8/255,1)
+			font_size: 32
+			font_name: 'Fonts\\BRITANIC.TTF'
+			on_release:
+				root.manager.get_screen('TranslateWindow').hasConnection = True
+				root.manager.get_screen('TranslateWindow').counter = 0
+				app.root.current = 'TranslateWindow'
+				root.manager.transition.direction = 'left'
+
+		Button:
+			text: 'Settings'
+			background_normal: ''
+			background_color: (219/255,124/255,8/255,1)
+			font_size: 32
+			font_name: 'Fonts\\BRITANIC.TTF'
+			on_release:
+				root.settingsButton()
+
+
+	RelativeLayout:
+
+		RelativeLayout:
+
+			Button:	
+				text: 'Back'
+				background_normal: ''
+				ouitline_color: (0,0,0,1)
+				outline_width: 4
+				font_name: 'Fonts\\BarlowCondensed-Black.ttf'
+				background_color: (165/255,18/255,249/255,1)
+				font_size: 32
+				size_hint: None, None
+				size: dp(120), dp(75)
+				pos: dp(15), (root.height - 90)
+
+				on_release:
+					root.backButton()
+
+
+<AddWordWindow>:
+	name: 'AddWordWindow'
+
+	RelativeLayout:
+
+		canvas.before:
+			Color:
+				rgba: 235/255,196/255,155/255,1
+			Rectangle:
+				size: root.size
+
+		GridLayout:
+
+			cols: 1
+			rows: 3
+
+			GridLayout:
+
+				cols: 2
+				rows: 1
+
+				Label:
+					id: word_label
+					text: 'Words'
+					font_size: 24
+					font_name: 'Fonts\\comic.ttf'
+					color: (0,0,0,1)
+
+				Label:
+					id: meaning_label
+					text: 'Meanings'
+					font_size: 24
+					font_name: 'Fonts\\comic.ttf'
+					color: (0,0,0,1)
+
+			BoxLayout:
+
+				size_hint: 0.5 , 0.5
+
+				orientation: 'vertical'
+
+				TextInput:
+					id: inputbox
+					hint_text: 'type here'
+					font_size: 28
+					font_name: 'Fonts\\consolab.ttf'
+					color: (0,0,0,1)
+					padding: 35
+					text_size: self.size
+					multiline: False
+					on_text_validate:
+						Factory.alreadyInDic().open() if root.repeatWord() and add_button.text == 'Add Words' else root.addButton()
+
+				Button:
+					id: add_button
+					text: 'Add Words'
+					background_normal: ''
+					background_color: (219/255,124/255,8/255,1)
+					font_size: 32
+					font_name: 'Fonts\\BRITANIC.TTF'
+					on_press:
+						Factory.alreadyInDic().open() if root.repeatWord() and add_button.text == 'Add Words' else root.addButton()
+
+		RelativeLayout:
+
+			Button:	
+				text: 'Back'
+				ouitline_color: (0,0,0,1)
+				outline_width: 4
+				font_size: 32
+				font_name: 'Fonts\\BarlowCondensed-Black.ttf'
+				background_normal: ''
+				background_color: (165/255,18/255,249/255,1)
+				size_hint: None, None
+				size: dp(120), dp(75)
+				pos: dp(15), (root.height - 90)
+				on_release:
+					root.backButton()
+
+
+<DelWordWindow>:
+	name: 'DelWordWindow'
+
+	BoxLayout:
+
+		canvas.before:
+			Color:
+				rgba: 235/255,196/255,155/255,1
+			Rectangle:
+				size: root.size
+
+		orientation: 'vertical'
+
+		size_hint: (0.5,0.8)
+
+		pos_hint: {'x': 0.5 - 0.25, 'y': 0.5 - 0.4}
+	
+		Label:
+			id: DelWordWindow_label
+			text: 'Type the word you want to delete'
+			color: (0,0,0,1)
+			font_size: 26
+			font_name: 'Fonts\\consolab.ttf'
+
+		TextInput:
+			id: inputbox
+			hint_text: 'type here'
+			color: (0,0,0,1)
+			font_size: 28
+			font_name: 'Fonts\\consolab.ttf'
+			padding_y: 35
+			text_size: self.size
+			multiline: False
+			on_text_validate:
+				if not root.wordUnknown(): root.delete_word()
+				else: root.showWarning()
+
+		GridLayout:
+
+			cols: 2
+			rows: 1
+
+			Button:
+				text: 'Delete Word'
+				background_normal: ''
+				background_color: (219/255,124/255,8/255,1)
+				font_size: 32
+				font_name: 'Fonts\\BRITANIC.TTF'
+				on_press:
+					if not root.wordUnknown(): root.delete_word()
+					else: root.showWarning()
+
+
+	RelativeLayout:
+
+		Button:	
+			text: 'Back'
+			ouitline_color: (0,0,0,1)
+			outline_width: 4
+			font_size: 32
+			font_name: 'Fonts\\BarlowCondensed-Black.ttf'
+			background_normal: ''
+			background_color: (165/255,18/255,249/255,1)
+			size_hint: None, None
+			size: dp(120), dp(75)
+			pos: dp(15), (root.height - 90)
+			on_release:
+				DelWordWindow_label.text = 'Type the word you want to delete'
+				app.root.current = 'CommandWindow'
+				root.manager.transition.direction = 'right'
+
+
+<EditWordWindow>:
+	name: 'EditWordWindow'
+
+	BoxLayout:
+
+		canvas.before:
+			Color:
+				rgba: 235/255,196/255,155/255,1
+			Rectangle:
+				size: root.size
+
+		orientation: 'vertical'
+
+		size_hint: (0.5,0.8)
+
+		pos_hint: {'x': 0.5 - 0.25, 'y': 0.5 - 0.4}
+	
+		Label:
+			id: EditWordWindow_label
+			text: 'Select What you want to edit'
+			font_size: 28
+			color: (0,0,0,1)
+
+		GridLayout:
+
+			cols: 2
+
+
+			ToggleButton:
+				id: wordedit
+				text: 'Word'
+				background_normal: ''
+				background_color: (219/255,124/255,8/255,1)
+				font_size: 32
+				font_name: 'Fonts\\COPRGTB.TTF'
+				disabled: True if meaningedit.state == 'down' else False
+
+			ToggleButton:
+				id: meaningedit
+				text: 'Meaning'
+				background_normal: ''
+				background_color: (219/255,124/255,8/255,1)
+				font_size: 32
+				font_name: 'Fonts\\COPRGTB.TTF'
+				disabled: True if wordedit.state == 'down' else False
+
+		TextInput:
+			id: editableWord
+			hint_text: 'type the meaning here' if meaningedit.state == 'down' else 'type the word here'
+			font_size: 28
+			font_name: 'Fonts\\consolab.ttf'
+			color: (0,0,0,1)
+			padding_y: 35
+			text_size: self.size
+			multiline: False
+			on_text_validate:
+				root.editSubmit()
+
+		Button:
+			id: editSubmitButton
+			text: 'Edit Meaning' if meaningedit.state == 'down' else 'Edit Word'
+			disabled: True if meaningedit.state == 'normal' and wordedit.state == 'normal' else False
+			font_size: 32
+			font_name: 'Fonts\\BRITANIC.TTF'
+			background_normal: ''
+			background_color: (219/255,124/255,8/255,1)
+			on_press:
+				root.editSubmit()
+
+	RelativeLayout:
+
+		Button:	
+			text: 'Back'
+			ouitline_color: (0,0,0,1)
+			outline_width: 4
+			background_normal: ''
+			font_name: 'Fonts\\BarlowCondensed-Black.ttf'
+			background_color: (165/255,18/255,249/255,1)
+			font_size: 32
+			size_hint: None, None
+			size: dp(120), dp(75)
+			pos: dp(15), (root.height - 90)
+			on_release:
+				EditWordWindow_label.text = 'Select What you want to edit'
+				app.root.current = 'CommandWindow'
+				root.manager.transition.direction = 'right'
+				editableWord.text = ''
+				wordedit.state = 'normal'
+				meaningedit.state = 'normal'
+
+
+<ChangeWindow>:
+	name: 'ChangeWindow'
+
+	BoxLayout:
+
+		canvas.before:
+			Color:
+				rgba: 235/255,196/255,155/255,1
+			Rectangle:
+				size: root.size
+
+		orientation: 'vertical'
+
+		size_hint: (0.5,0.8)
+
+		pos_hint: {'x': 0.5 - 0.25, 'y': 0.5 - 0.4}
+	
+		Label:
+			id: ChangeWindow_label
+			text: 'Type to Change'
+			color: (0,0,0,1)
+
+		TextInput:
+			id: inputbox
+			hint_text: 'type here'
+			color: (0,0,0,1)
+			font_size: 28
+			font_name: 'Fonts\\consolab.ttf'
+			padding_y: 35
+			text_size: self.size
+			multiline: False
+			on_text_validate:
+				root.changeButton()
+
+		GridLayout:
+
+			cols: 2
+			rows: 1
+
+			Button:
+				text: 'Change'
+				font_size: 32
+				font_name: 'Fonts\\BRITANIC.TTF'
+				background_normal: ''
+				background_color: (219/255,124/255,8/255,1)
+				on_press:
+					root.changeButton()
+
+	RelativeLayout:
+
+		Button:	
+			text: 'Back'
+			font_name: 'Fonts\\BarlowCondensed-Black.ttf'
+			background_normal: ''
+			ouitline_color: (0,0,0,1)
+			outline_width: 4
+			background_color: (165/255,18/255,249/255,1)
+			font_size: 32
+			size_hint: None, None
+			size: dp(120), dp(75)
+			pos: dp(15), (root.height - 90)
+			on_release:
+				ChangeWindow_label.text = 'Type to Change'
+				app.root.current = 'EditWordWindow'
+				root.manager.transition.direction = 'right'
+				inputbox.text = ''
+
+
+<MultiMeaningEdit>: 
+	name: 'MultiMeaningEdit'
+
+	canvas.before:
+		Color:
+			rgba: 235/255,196/255,155/255,1
+		Rectangle:
+			size: root.size
+
+
+	RelativeLayout:
+
+		RelativeLayout:
+
+			Button:	
+				text: 'Back'
+				background_normal: ''
+				ouitline_color: (0,0,0,1)
+				outline_width: 4
+				font_name: 'Fonts\\BarlowCondensed-Black.ttf'
+				background_color: (165/255,18/255,249/255,1)
+				font_size: 32
+				size_hint: None, None
+				size: dp(120), dp(75)
+				pos: dp(15), (root.height - 90)
+				on_release:
+					root.backButton()
+
+
+<TestCustomizationWindow>:
+	name: 'TestCustomizationWindow'
+
+
+	BoxLayout:
+
+		canvas.before:
+			Color:
+				rgba: 235/255,196/255,155/255,1
+			Rectangle:
+				size: root.size
+
+		orientation: 'vertical'
+
+		size_hint: (0.5,0.8)
+
+		pos_hint: {'x': 0.5 - 0.25, 'y': 0.15}
+
+
+		GridLayout:
+
+			cols: 1
+			rows: 5
+
+			Label:
+				text: 'number of questions'
+				font_size: 32
+				color: (0,0,1,1)
+
+			GridLayout:
+
+				cols: 4
+				rows: 1
+
+				ToggleButton:
+					id: tenQuestions
+					text: '10'
+					on_release:
+						root.questionSelected()
+						tenQuestions.state = 'down'
+
+				ToggleButton:
+					id: fifteenQuestions
+					text: '15'
+					on_release:
+						root.questionSelected()
+						fifteenQuestions.state = 'down'
+
+				ToggleButton:
+					id: twentyQuestions
+					text: '20'
+					on_release:
+						root.questionSelected()
+						twentyQuestions.state = 'down'
+
+				ToggleButton:
+					id: allQuestions
+					text: 'All'
+					on_release:
+						root.questionSelected()
+						allQuestions.state = 'down'
+
+			Label:
+				text: 'customize question numbers (Premium Only)'
+				font_size: 20
+				color: (0,0,1,1)
+
+			TextInput:
+				id: customInput
+				multiline: False
+				hint_text: 'type how many questions do you want...'
+				on_text_validate:
+					root.customInput()
+
+			Button:
+				id: testButton
+				text: 'Take The Test'
+				on_release:
+					root.testStartButton()
+
+	RelativeLayout:
+
+		Button:	
+			text: 'Back'
+			font_name: 'Fonts\\BarlowCondensed-Black.ttf'
+			font_size: 32
+			ouitline_color: (0,0,0,1)
+			outline_width: 4
+			background_normal: ''
+			background_color: (165/255,18/255,249/255,1)
+			size_hint: None, None
+			size: dp(120), dp(75)
+			pos: dp(15), (root.height - 90)
+			on_release:
+				root.backButton()
+
+
+<TestWindow>:
+	name: 'TestWindow'
+
+	BoxLayout:
+
+		canvas.before:
+			Color:
+				rgba: 235/255,196/255,155/255,1
+			Rectangle:
+				size: root.size
+
+		orientation: 'vertical'
+
+		size_hint: (0.5,0.8)
+
+		pos_hint: {'x': 0.5 - 0.25, 'y': 0.15}
+
+		Label:
+			id: test_question
+			text: ''
+			font_size: 26
+			color: (0,0,0,1)
+
+		TextInput:
+			id: test_answer
+			hint_text: 'type here'
+			font_name: 'Fonts\\consolab.ttf'
+			color: (0,0,0,1)
+			font_size: 28
+			padding_y: 35
+			text_size: self.size
+			multiline: False
+			on_text_validate:
+				root.submit() if submit_button.text == 'Submit' else root.next()
+
+		Button:
+			id: submit_button
+			text: 'Submit'
+			font_name: 'Fonts\\BRITANIC.TTF'
+			background_normal: ''
+			background_color: (219/255,124/255,8/255,1)
+			font_size: 32
+			on_press:
+				root.submit() if submit_button.text == 'Submit' else root.next()
+
+		Label:
+			id: result
+			text: ''
+			font_size: 28
+			color: (114/255,228/255,83/255,1) if submit_button.disabled == True else (53/255,0,235/255,1)
+			bold: True
+			italic: True
+			outline_color: (19/255,0,84/255,1) if submit_button.disabled == True else (19/255,239/255,0,1)
+			outline_width: 2
+			canvas.before:
+				Color:
+					rgba: (225/255,54/255,10/255,1) if submit_button.disabled == True else (235/255,196/255,155/255,1)
+				Rectangle:
+					size: self.size
+					pos: self.pos
+
+	RelativeLayout:
+
+		Button:	
+			text: 'Back'
+			font_name: 'Fonts\\BarlowCondensed-Black.ttf'
+			font_size: 32
+			ouitline_color: (0,0,0,1)
+			outline_width: 4
+			background_normal: ''
+			background_color: (165/255,18/255,249/255,1)
+			size_hint: None, None
+			size: dp(120), dp(75)
+			pos: dp(15), (root.height - 90)
+			on_release:
+				root.backButton()
+
+
+#:set boxWidth (dp(350))
+#:set boxHeight (dp(350))
+
+
+<TranslateWindow>:
+	name: 'TranslateWindow'
+
+	BoxLayout:
+
+		canvas.before:
+			Color:
+				rgba: 235/255,196/255,155/255,1
+			Rectangle:
+				size: root.size
+
+		orientation: 'vertical'
+
+		size_hint: (0.5,0.8)
+
+		pos_hint: {'x': 0.5 - 0.25, 'y': 0.5 - 0.4}
+	
+		Label:
+			id: showTranslate
+			text: 'Translated Words will be shown here'
+			font_size: 28
+			color: (0,0,0,1)
+
+		GridLayout:
+
+			cols: 2
+
+
+			ToggleButton:
+				id: primaryLanguage
+				text: ''
+				background_normal: ''
+				background_color: (219/255,124/255,8/255,1)
+				font_size: 20
+				font_name: 'Fonts\\COPRGTB.TTF'
+				disabled: True if learningLanguage.state == 'down' else False
+
+			ToggleButton:
+				id: learningLanguage
+				text: ''
+				background_normal: ''
+				background_color: (219/255,124/255,8/255,1)
+				font_size: 20
+				font_name: 'Fonts\\COPRGTB.TTF'
+				disabled: True if primaryLanguage.state == 'down' else False
+
+		TextInput:
+			id: inputbox
+			hint_text: 'type here to translate'
+			font_size: 28
+			font_name: 'Fonts\\consolab.ttf'
+			color: (0,0,0,1)
+			padding_y: 35
+			text_size: self.size
+			multiline: False
+			on_text_validate:
+				root.translateWord(inputbox.text)
+
+
+		GridLayout:
+
+			cols: 2
+			rows: 1
+
+			Button:
+				id: translateButton
+				text: 'Translate'
+				disabled: True if learningLanguage.state == 'normal' and primaryLanguage.state == 'normal' else False
+				font_size: 32
+				font_name: 'Fonts\\BRITANIC.TTF'
+				background_normal: ''
+				background_color: (219/255,124/255,8/255,1)
+				size_hint: 1,.7
+				on_press:
+					root.translateWord(inputbox.text)
+
+			Button:
+				id: addToDicButton
+				text: 'Add to Dictionary'
+				font_size: 20
+				font_name: 'Fonts\\BRITANIC.TTF'
+				background_normal: ''
+				background_color: (219/255,124/255,8/255,1)
+				size_hint: 1,.3
+				on_press:
+					root.addToDictionary(showTranslate.text) if not root.manager.get_screen('AddWordWindow').repeatWord() else Factory.alreadyInDic().open()
+
+	RelativeLayout:
+
+		Button:	
+			text: 'Back'
+			ouitline_color: (0,0,0,1)
+			outline_width: 4
+			background_normal: ''
+			font_name: 'Fonts\\BarlowCondensed-Black.ttf'
+			background_color: (165/255,18/255,249/255,1)
+			font_size: 32
+			size_hint: None, None
+			size: dp(120), dp(75)
+			pos: dp(15), (root.height - 90)
+			on_release:
+				root.backButton()
+				
+
+<SettingsWindow>:
+	name: 'SettingsWindow'
+
+	RelativeLayout:
+
+		canvas.before:
+			Color:
+				rgba: 235/255,196/255,155/255,1
+			Rectangle:
+				size: root.size
+
+		BoxLayout:
+
+			size_hint: None, None
+
+			size: boxWidth, boxHeight
+
+			orientation: 'vertical'
+
+			pos: root.center_x - boxWidth//2, root.center_y - boxHeight//4
+
+			GridLayout:
+
+				cols: 2
+				rows: 1
+
+				size_hint: 1,.25
+
+				ToggleButton:
+					id: themeButton
+					text: 'Themes'
+					font_size: 24
+					color: (0,0,0,1)
+					on_release:
+						themeButton.state = 'down' if dictionaryButton.state == 'normal' else 'normal'
+
+				ToggleButton:
+					id: dictionaryButton
+					text: 'Dictionaries'
+					font_size: 24
+					color: (0,0,0,1)
+					on_release:
+						dictionaryButton.state = 'down'
+						themeButton.state = 'normal'
+						root.manager.get_screen('AddDictionaryWindow').ids.dictionaryButton.state = 'down'
+						root.manager.get_screen('AddDictionaryWindow').ids.themeButton.state = 'normal'
+						root.manager.get_screen('AddDictionaryWindow').toggleButtons()
+						app.root.current = 'AddDictionaryWindow'
+						root.manager.transition.direction = 'left'
+
+
+			GridLayout:
+
+				cols: 1
+				rows: 4
+
+				Label:
+					text: 'Color/BG'
+					font_size: 24
+					color: (0,0,0,1)
+					size_hint: 1, 1.25
+
+				GridLayout:
+
+					cols: 3
+					rows: 1
+
+					ToggleButton:
+						text: 'Default'
+						font_size: 24
+
+					ToggleButton:
+						text: 'Blue'
+						font_size: 24
+
+					ToggleButton:
+						text: 'Green'
+						font_size: 24
+
+				Label:
+					text: 'Fonts/Text'
+					font_size: 24
+					color: (0,0,0,1)
+					size_hint: 1, 1.25
+
+				GridLayout:
+
+					cols: 3
+					rows: 1
+
+					ToggleButton:
+						text: 'italic'
+						font_size: 24
+
+					ToggleButton:
+						text: 'bold'
+						font_size: 24
+
+					ToggleButton:
+						text: 'underline'
+						font_size: 24
+
+		RelativeLayout:
+
+			Button:	
+				text: 'Back'
+				ouitline_color: (0,0,0,1)
+				outline_width: 4
+				background_normal: ''
+				font_name: 'Fonts\\BarlowCondensed-Black.ttf'
+				background_color: (165/255,18/255,249/255,1)
+				font_size: 32
+				size_hint: None, None
+				size: dp(120), dp(75)
+				pos: dp(15), (root.height - 90)
+				on_release:
+					app.root.current = 'CommandWindow'
+					root.manager.transition.direction = 'right'
+
+
+<AddDictionaryWindow>:
+
+	name: 'AddDictionaryWindow'
+
+	RelativeLayout:
+
+		canvas.before:
+			Color:
+				rgba: 235/255,196/255,155/255,1
+			Rectangle:
+				size: root.size
+
+		BoxLayout:
+
+			size_hint: None, None
+
+			size: boxWidth, boxHeight
+
+			orientation: 'vertical'
+
+			pos: root.center_x - boxWidth//2, root.center_y - boxHeight//4
+
+			GridLayout:
+
+				cols: 2
+				rows: 1
+
+				size_hint: 1,.25
+
+				ToggleButton:
+					id: themeButton
+					text: 'Themes'
+					font_size: 24
+					color: (0,0,0,1)
+					on_release:
+						dictionaryButton.state = 'normal'
+						themeButton.state = 'down'
+						root.manager.get_screen('SettingsWindow').ids.themeButton.state = 'down'
+						root.manager.get_screen('SettingsWindow').ids.dictionaryButton.state = 'normal'
+						app.root.current = 'SettingsWindow'
+						root.manager.transition.direction = 'right'
+
+				ToggleButton:
+					id: dictionaryButton
+					text: 'Dictionaries'
+					font_size: 24
+					color: (0,0,0,1)
+					on_release:
+						dictionaryButton.state = 'down' if themeButton.state == 'normal' else 'normal'
+
+
+			GridLayout:
+
+				cols: 1
+				rows: 4
+
+				Label:
+					text: 'Your Dictionaries'
+					font_size: 24
+					color: (0,0,0,1)
+					size_hint: 1, 0.75
+
+				GridLayout:
+
+					cols: 2
+					rows: 1
+					size_hint: 1, 0.50
+
+					ToggleButton:
+						id: dictionary1
+						text: ''
+						font_size: 18
+						text_size: self.size
+					    halign: 'center'
+					    valign: 'middle'
+					    on_release:
+					    	root.dictionary1Selected()
+
+					ToggleButton:
+						id: dictionary2
+						text: ''
+						font_size: 18
+						text_size: self.size
+					    halign: 'center'
+					    valign: 'middle'
+					    on_release:
+					    	root.dictionary2Selected()
+
+				GridLayout:
+
+					cols: 1
+					rows: 1
+					size_hint: 1, 0.35
+
+					ToggleButton:
+						id: dictionary3
+						text: ''
+						font_size: 18
+						text_size: self.size
+					    halign: 'center'
+					    valign: 'middle'
+					    on_release:
+					    	root.dictionary3Selected()
+
+				RelativeLayout:
+
+					size_hint: 1, 0.35
+
+					Button:
+						id: createNewDicbtn
+						text: 'Create A New Dictionary'
+						font_size: 24
+						color: (0,0,0,1)
+						size_hint: 1, 1.25
+						pos_hint: {'top': .3}
+						on_press:
+							root.manager.get_screen('CreateNewDicWindow').primary_lang_input.text = ''
+							root.manager.get_screen('CreateNewDicWindow').learning_lang_input.text = ''
+							app.root.current = 'CreateNewDicWindow'
+							root.manager.transition.direction = 'left'
+
+
+		RelativeLayout:
+
+			Button:	
+				text: 'Back'
+				ouitline_color: (0,0,0,1)
+				outline_width: 4
+				background_normal: ''
+				font_name: 'Fonts\\BarlowCondensed-Black.ttf'
+				background_color: (165/255,18/255,249/255,1)
+				font_size: 32
+				size_hint: None, None
+				size: dp(120), dp(75)
+				pos: dp(15), (root.height - 90)
+				on_release:
+					root.manager.get_screen('SettingsWindow').ids.themeButton.state = 'down'
+					root.manager.get_screen('SettingsWindow').ids.dictionaryButton.state = 'normal'
+					app.root.current = 'SettingsWindow'
+					root.manager.transition.direction = 'right'
+
+
+<CreateNewDicWindow>:
+	name: 'CreateNewDicWindow'
+
+	canvas.before:
+		Color:
+			rgba: 235/255,196/255,155/255,1
+		Rectangle:
+			size: root.size
+
+
+	RelativeLayout:
+
+		Button:	
+			text: 'Back'
+			ouitline_color: (0,0,0,1)
+			outline_width: 4
+			background_normal: ''
+			font_name: 'Fonts\\BarlowCondensed-Black.ttf'
+			background_color: (165/255,18/255,249/255,1)
+			font_size: 32
+			size_hint: None, None
+			size: dp(120), dp(75)
+			pos: dp(15), (root.height - 90)
+			on_release:
+				root.backButton()
